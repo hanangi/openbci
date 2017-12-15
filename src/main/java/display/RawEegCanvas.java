@@ -5,6 +5,8 @@ import hardware.IDriverListener;
 import hardware.ProtocolFactory;
 import javolution.util.FastList;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -22,7 +24,7 @@ import configuration.IConfigurationListener;
 public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurationListener {
 
 	private int scaleX = 0 ;
-	private boolean isInitalized = false ;
+	private AtomicBoolean isInitalized = new AtomicBoolean(false);
 	private int visibleChannelsNumber;
 	private String[] labelsChannel;
 	private Font labelFont;
@@ -68,12 +70,17 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 	}
 
 	public void dataArrived(EegData eeg) {
-		if(!isInitalized){
+		if(!isInitalized.get()){
 			channelsNumber = eeg.getChannelsNumber() ;	
 			visibleChannelsNumber = channelsNumber ;
 			ProjectStarter.getControlPanel().initialize() ;
 			initializeChannelLabels() ;
-			isInitalized = true ;
+			
+			try {
+				Thread.sleep(100);
+				isInitalized.set(true);
+			} catch (InterruptedException e) {}
+			
 		}
 		if(scaleX --==0){
 			actualDataBuffer.get(bufferAvailable).copy(eeg);
@@ -126,6 +133,7 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 	private boolean[] visibleChannelsNumbers;
 	private int scaleY =1;
 	private int[] extremeVals;
+	
 	public void addMyPaintListener(){
 		addPaintListener(new PaintListener() {
 
@@ -160,7 +168,7 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 					imageGC.drawLine(signalXpos+2,0,signalXpos+2,getSize().y);
 					drawSingals(eegd,imageGC);
 
-					if(isInitalized){
+					if(isInitalized.get()){
 						int stepY = getSize().y / visibleChannelsNumber;
 						imageGC.setFont(labelFont);
 						imageGC.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
