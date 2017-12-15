@@ -92,7 +92,7 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 	
 	private static void updateTiming(){
 		int interspaceTime = conf.getValueInt("interspaceTimeMin")+rnd.nextInt(conf.getValueInt("interspaceTimeMax")-conf.getValueInt("interspaceTimeMin"));
-		System.out.println("[ProjectStarter] interspace time = "+interspaceTime);
+		log.info("[ProjectStarter] interspace time = "+interspaceTime);
 		if(timeManager.getListenersChainSize()==0){
 			timeManager.addTimeManagerListenerChain(new long[]{interspaceTime,conf.getValueInt("presentationTime")}, new int[]{ITimeManagerListener.ACTION_HIGHLIGHT,ITimeManagerListener.ACTION_CHANGE_POS}, true);
 			timeManager.addTimeManagerListenerChain(new long[]{interspaceTime+conf.getValueInt("presentationTime"),conf.getValueInt("responseSpan")}, new int[]{ITimeManagerListener.PROCESSING_START,ITimeManagerListener.PROCESSING_END}, true);
@@ -106,17 +106,17 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 				break;
 
 			case Configuration.CLASSIFICATION_WEIGHTS:
-				System.out.println("[ProjectStarter] updating time for type WEIGHTS");
+				log.info("[ProjectStarter] updating time for type WEIGHTS");
 				int beginTime = ((ElementClassificatorConf) ProjectStarter.getConf().getElement("classificationParams")).getClassificationParams(true).getFirst().span ;
 				int endTime = ((ElementClassificatorConf) ProjectStarter.getConf().getElement("classificationParams")).getClassificationParams(true).getLast().span ;
-				System.out.println("[ProjectStarter:updateTiming()] begin "+beginTime+ " len time "+(endTime-beginTime));
+				log.info("[ProjectStarter:updateTiming()] begin "+beginTime+ " len time "+(endTime-beginTime));
 				sp.setStartTime(beginTime);
 				sp.setEndTime(endTime);
 				break;
 			case Configuration.CLASSIFICATION_AVG_IN_WINDOW:
 				beginTime = ProjectStarter.getConf().getValueInt("classificationAvrageFrom") ;
 				endTime = ProjectStarter.getConf().getValueInt("classificationAvrageTo") ;
-				System.out.println("[ProjectStarter:updateTiming()] begin "+beginTime+ " len time "+(endTime-beginTime));
+				log.info("[ProjectStarter:updateTiming()] begin "+beginTime+ " len time "+(endTime-beginTime));
 				sp.setStartTime(beginTime);
 				sp.setEndTime(endTime);
 				break ;
@@ -132,7 +132,7 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 			{ this.setDaemon(true); this.start(); }
 			public void run() {
 				while(true) {
-					System.out.println("High frequency daemon stared.");
+					log.info("High frequency daemon stared.");
 					try {
 						Thread.sleep(Integer.MAX_VALUE);
 					}
@@ -147,6 +147,7 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 		if(args.length>0 && args[0]!=null){
 			log.info("Loading configuration... from file "+args[0]);
 			conf = ConfigurationLoader.load(args[0]) ;
+			conf.getElements().forEach((a) -> { log.info("Name: " + a.getName() + ",\t\tValue: " + a.getValue());});
 		}
 		else
 			conf = ConfigurationLoader.load() ;
@@ -233,7 +234,7 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 		synchronized(trainer){
 			trainer.notify() ;
 		}
-		System.out.println("Shutting down...");
+		log.info("Shutting down...");
 	}
 
 	public static Configuration getConf() {
@@ -258,36 +259,36 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 
 	public void startLearning(){
 		updateConfigurationChanges() ;
-		System.out.println("STARTING learning sequence");
+		log.info("STARTING learning sequence");
 
 		if(conf.getValueInt("signalSource")==Configuration.SOURCE_HDD){
 			// fastforward to initialization sequence data
 			DataObject header = ((HddRecordingPlayer) drv.getPacketSupply()).goToInitializationSession();
-			System.out.println("Got header: "+header.getData());
+			log.info("Got header: "+header.getData());
 			FastTable<FastTable<EegDataWithDescr>> repetitions = new FastTable<FastTable<EegDataWithDescr>>() ;
 			FastTable<EegDataWithDescr> data = new FastTable<EegDataWithDescr>() ;
 			DataObject packet;
 			FastTable <int[]> positivePositions = (FastTable<int[]>) ((HddRecordingPlayer) drv.getPacketSupply()).getDataPacket().getData() ;
 			FastTable <int[]> highlightedPositions = (FastTable<int[]>) ((HddRecordingPlayer) drv.getPacketSupply()).getDataPacket().getData() ;
-			System.out.println("Highlighted positions: ");
+			log.info("Highlighted positions: ");
 			for(int[] positions : highlightedPositions){
 				for(int pos : positions)
 					System.out.print(" "+pos) ;
-				System.out.println("");
+				log.info("");
 			}
-			System.out.println("Positive positions: ");
+			log.info("Positive positions: ");
 			for(int[] positions : positivePositions){
 				for(int pos : positions)
 					System.out.print(" "+pos) ;
-				System.out.println("");
+				log.info("");
 			}
-			System.out.println("");
+			log.info("");
 			Configuration conf  = (Configuration) ((HddRecordingPlayer) drv.getPacketSupply()).getDataPacket().getData() ;
 			boolean addData = false ;
 			int positive = -1 ;
 			int tempRep = 0 ;
 			int tempElem = 0 ;
-			System.out.println("[ProjectStarter:startlearning] loading data");
+			log.info("[ProjectStarter:startlearning] loading data");
 			while((packet = ((HddRecordingPlayer) drv.getPacketSupply()).getDataPacket())!=null){
 				if(packet.getDataType()==DataObject.HEADER_INITIALIZATION_NEXT_REPETITION){
 					if(data.size()>0)
@@ -353,7 +354,7 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 			header.setData(trainer.getPositivePositions()) ;
 			hddCollector.addHeader(header);
 			
-			System.out.println("[ProjectStarter:trainingStart] writing positive pos LEN "+trainer.getPositivePositions().length);
+			log.info("[ProjectStarter:trainingStart] writing positive pos LEN "+trainer.getPositivePositions().length);
 		}
 
 	}
@@ -382,13 +383,13 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 		if(!displayUpdater.isRunState())
 			new Thread(displayUpdater,"DisplayUpdater").start();
 
-		System.out.println("STARTED");
+		log.info("STARTED");
 	}
 	public volatile boolean hasConfigurationChanged = false ;
 
 	public void configurationChanged() {
 		updateTiming() ;
-		System.out.println("[ProjectStarter] updating singal source : "+conf.getValueInt("signalSource"));
+		log.info("[ProjectStarter] updating singal source : "+conf.getValueInt("signalSource"));
 		HddRecordingPlayer hdd;
 		switch (conf.getValueInt("signalSource")){
 
@@ -421,12 +422,12 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 		System.out.print("[ProjectStarter] Configuration changed - updating...") ;
 		updateTiming() ;
 		sacc.setNumberOfRepeats(conf.getValueInt("signalRepeats"));
-		System.out.println(".. [OK] ") ;
+		log.info(".. [OK] ") ;
 		hasConfigurationChanged = false ;
 	}
 
 	public void makeSynchronization(){
-		System.out.println("[ProjectStarter] Making synchronization... ") ;
+		log.info("[ProjectStarter] Making synchronization... ") ;
 		synchronized(hddCollector){
 			hddCollector.notify() ;
 		}
@@ -468,7 +469,7 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("jEEG starter/sychronizer stopped.");
+		log.info("jEEG starter/sychronizer stopped.");
 	}
 
 	public void stopRunning() {

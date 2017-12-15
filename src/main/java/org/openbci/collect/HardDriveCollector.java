@@ -4,27 +4,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.GZIPOutputStream;
 
-import org.openbci.astart.ProjectStarter;
+import org.apache.log4j.Logger;
 import org.openbci.configuration.Configuration;
 import org.openbci.configuration.IConfigurationListener;
-import org.openbci.display.IDisplayUpdaterListener;
-import org.openbci.display.UserVisibleMatrixCanvas;
 import org.openbci.general.EegData;
 import org.openbci.training.EegDataWithDescr;
 
 import hardware.IDriverListener;
 
 public class HardDriveCollector implements Runnable , IDriverListener, IConfigurationListener {
+	
+	private final static Logger log = Logger.getLogger(HardDriveCollector.class);
 
 	private File file;
 	private File fileHumanReadable ;
@@ -40,7 +35,7 @@ public class HardDriveCollector implements Runnable , IDriverListener, IConfigur
 		
 		boolean success = (new File(path)).mkdirs();
 	    if (!success) {
-	        System.out.println("[ERROR:HardDriveCollector] can't make dir for writing PATH:"+path);
+	        log.info("[ERROR:HardDriveCollector] can't make dir for writing PATH:"+path);
 	    }
 	    // next available file name (from zero -> infinity )
 	    int i = 0 ;
@@ -139,11 +134,11 @@ public class HardDriveCollector implements Runnable , IDriverListener, IConfigur
 	private IShowedSymbols showedSymbols;
 	
 	public void run() {
-		System.out.println("[HddCollector] - starting"+this);
+		log.info("[HddCollector] - starting"+this);
 		runState = true ;
 		writeStart() ;
 		writeStartHuman() ;
-		System.out.println("[HddCollector] - started");
+		log.info("[HddCollector] - started");
 		while(runState){
 			synchronized(this){
 				try {
@@ -153,7 +148,7 @@ public class HardDriveCollector implements Runnable , IDriverListener, IConfigur
 				}
 			}
 			// write sequence of symbols that was presented
-			System.out.println("[HddCollector] - writing headers ! "+this);
+			log.info("[HddCollector] - writing headers ! "+this);
 			for(DataObject object : fifoHeaders){
 				write(object) ;
 				writeHuman(object) ;
@@ -169,7 +164,7 @@ public class HardDriveCollector implements Runnable , IDriverListener, IConfigur
 		}
 		writeEnd() ;
 		writeEndHuman() ;
-		System.out.println("[HddCollector] - stopped..");
+		log.info("[HddCollector] - stopped..");
 	}
 
 	public void dataArrived(EegData eeg) {
@@ -177,7 +172,7 @@ public class HardDriveCollector implements Runnable , IDriverListener, IConfigur
 	}
 	
 	public void addHeader(DataObject head){
-		System.out.println("[HddCollector] - adding new header "+this);
+		log.info("[HddCollector] - adding new header "+this);
 		fifoHeaders.add(head) ;
 	}
 	
@@ -186,7 +181,7 @@ public class HardDriveCollector implements Runnable , IDriverListener, IConfigur
 	}
 	
 	public void configurationChanged() {
-		System.out.println("[HddCollector] Configuration changed - need update") ;
+		log.info("[HddCollector] Configuration changed - need update") ;
 		
 	}
 	public void setDisplayedObjects(IShowedSymbols showedSymbols) {
