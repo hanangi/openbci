@@ -1,27 +1,10 @@
 package astart;
-import general.EegData;
-import general.ITimeManagerListener;
-import general.TimeManager;
-import hardware.DriverExecutor;
-import hardware.HddRecordingPlayer;
-
 import java.util.Random;
 
-import javolution.util.FastTable;
-
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import result.ResultManager;
-import signalProcessing.AveragingFilter;
-import signalProcessing.Classifier;
-import signalProcessing.ConvolutionFilter;
-import signalProcessing.SignalAccumulator;
-import signalProcessing.SignalProcessor;
-import training.EegDataWithDescr;
-import training.Trainer;
 import collect.DataObject;
 import collect.HardDriveCollector;
 import collect.IShowedSymbols;
@@ -34,9 +17,25 @@ import configuration.IConfigurationListener;
 import display.ControlPanel;
 import display.DisplayUpdater;
 import display.MatrixResponsesCanvas;
+import general.EegData;
+import general.ITimeManagerListener;
+import general.TimeManager;
+import hardware.DriverExecutor;
+import hardware.HddRecordingPlayer;
+import javolution.util.FastTable;
+import result.ResultManager;
+import signalProcessing.AveragingFilter;
+import signalProcessing.Classifier;
+import signalProcessing.ConvolutionFilter;
+import signalProcessing.SignalAccumulator;
+import signalProcessing.SignalProcessor;
+import training.EegDataWithDescr;
+import training.Trainer;
 
 
 public class ProjectStarter extends Thread implements IConfigurationListener {
+	
+	private final static Logger log = Logger.getLogger(ProjectStarter.class);
 
 	public static final String VERSION = "0.96";
 
@@ -125,12 +124,10 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 		}
 	}
 	
-	static Logger logger = Logger.getLogger(ProjectStarter.class.getName());
-
-	
 	public static void main(String[] args) {
-		logger.debug("Starting... jEEG "+VERSION);
+		log.debug("Starting... jEEG "+VERSION);
 		//PropertyConfigurator.configure("log4j.xml");
+		
 		new Thread("High frequency daemon") {
 			{ this.setDaemon(true); this.start(); }
 			public void run() {
@@ -144,15 +141,17 @@ public class ProjectStarter extends Thread implements IConfigurationListener {
 				}
 			}
 		};
-		System.out.println("Loading configuration...");
+		
+		log.info("Loading configuration...");
+		
 		if(args.length>0 && args[0]!=null){
-			System.out.println("Loading configuration... from file "+args[0]);
+			log.info("Loading configuration... from file "+args[0]);
 			conf = ConfigurationLoader.load(args[0]) ;
 		}
 		else
 			conf = ConfigurationLoader.load() ;
 		    
-		System.out.println("Starting drivers and timers...");
+		log.info("Starting drivers and timers...");
 		
 		drv = new DriverExecutor() ;	
 		Thread drvThread = new Thread(drv,"Driver executor");

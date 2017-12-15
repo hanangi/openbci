@@ -1410,9 +1410,13 @@ public class ControlPanel implements ISignalAccumulatorWinnerListener {
 		int numberOfChans = ProjectStarter.getConf().getValueInt("numberOfChannels") ;
 		int canvasHeight = tabFolderCanvases.getBounds().height-8 ;
 		int stepY = canvasHeight/numberOfChans ;
-		for(int i=0;i<numberOfChans;i++){
-			checkBoxesChannelVisible[i].setLocation(tabFolderCanvases.getBounds().width-40,6+stepY*i);
+		
+		if(checkBoxesChannelVisible != null) {
+			for(int i=0;i<numberOfChans;i++){
+				checkBoxesChannelVisible[i].setLocation(tabFolderCanvases.getBounds().width-40,6+stepY*i);
+			}
 		}
+		
 		buttonMaginifierPlus.setLocation(4, tabFolderCanvases.getBounds().height-60);
 		buttonMagnifierMinus.setLocation(36, tabFolderCanvases.getBounds().height-60);
 		buttonMagnifySignalAmpPlus.setLocation(tabFolderCanvases.getBounds().width-60,6);

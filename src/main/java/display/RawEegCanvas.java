@@ -27,7 +27,7 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 	private String[] labelsChannel;
 	private Font labelFont;
 	private Runnable refresh ;
-	
+
 	volatile short bufferDrawn = 0 ;
 	volatile short bufferAvailable = 0 ;
 	public RawEegCanvas(Composite parent, int style) {
@@ -35,15 +35,15 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 		for(int i=0;i<100;i++)
 			actualDataBuffer.add(new EegData(0,0,new int[]{0}));
 		Font systemFont = Display.getDefault().getSystemFont();
-	    //     FontData objects contain the font properties.
-	    //     With some operating systems a font may possess multiple
-	    //     FontData instances. We only use the first one.
-	    FontData[] data = systemFont.getFontData();
-	    FontData data0 = data[0];
-	    //     Set the font style to italic
-	    data0.setHeight(6);
-	    labelFont = new Font(Display.getDefault(), data0);
-	    refresh = new Runnable() {
+		//     FontData objects contain the font properties.
+		//     With some operating systems a font may possess multiple
+		//     FontData instances. We only use the first one.
+		FontData[] data = systemFont.getFontData();
+		FontData data0 = data[0];
+		//     Set the font style to italic
+		data0.setHeight(6);
+		labelFont = new Font(Display.getDefault(), data0);
+		refresh = new Runnable() {
 			public void run() {
 				if(!isDisposed()&&isVisible()){
 					redraw() ; 
@@ -55,14 +55,16 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 		};
 	}
 
-	private void initializeChannelLabels(){
+	private void initializeChannelLabels() {
 
-	int numberOfChans = ProjectStarter.getConf().getValueInt("numberOfChannels") ;
+		//visibleChannelsNumbers = ProjectStarter.getControlPanel().getCheckBoxesVisibleValues();
+		int numberOfChans = ProjectStarter.getConf().getValueInt("numberOfChannels") ;
 		labelsChannel = new String[numberOfChans] ;
 		for(int i=0;i<numberOfChans;i++){		
 			String btn = "Chan "+i ;
 			labelsChannel[i] = btn ;
 		}
+
 	}
 
 	public void dataArrived(EegData eeg) {
@@ -134,10 +136,10 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 						|| image.getBounds().width != getSize().x
 						|| image.getBounds().height != getSize().y) {
 					image =
-						new Image(
-								disp,
-								getSize().x,
-								getSize().y);
+							new Image(
+									disp,
+									getSize().x,
+									getSize().y);
 					setData("double-buffer-image", image);
 				}
 
@@ -157,18 +159,18 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 					imageGC.setForeground(disp.getSystemColor(SWT.COLOR_BLUE)); 
 					imageGC.drawLine(signalXpos+2,0,signalXpos+2,getSize().y);
 					drawSingals(eegd,imageGC);
-				    
+
 					if(isInitalized){
 						int stepY = getSize().y / visibleChannelsNumber;
-					    imageGC.setFont(labelFont);
-					    imageGC.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-					    for(int i=0,a=0;i<labelsChannel.length;i++)
-					    	if(visibleChannelsNumbers[i])
-					    		imageGC.drawText(labelsChannel[i], 4, stepY*(a++), true);
+						imageGC.setFont(labelFont);
+						imageGC.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+						for(int i=0,a=0;i<labelsChannel.length;i++)
+							if(visibleChannelsNumbers[i])
+								imageGC.drawText(labelsChannel[i], 4, stepY*(a++), true);
 					}
 					if(signalXpos>2&&signalXpos<getSize().x-2)
 						e.gc.drawImage(image, 0, 0);
-					
+
 					signalXpos++ ;
 					bufferDrawn++;
 					if(bufferDrawn>=actualDataBuffer.size())
@@ -180,9 +182,9 @@ public class RawEegCanvas extends Canvas implements IDriverListener, IConfigurat
 	}
 
 	private static String stateToString(int style, int styleFlag) {
-		  return (style & styleFlag) != 0 ? "on" : "off";
+		return (style & styleFlag) != 0 ? "on" : "off";
 	}
-	
+
 	public EegData getPrevData() {
 		return prevData;
 	}
