@@ -1,7 +1,5 @@
 package hardware;
 
-import general.EegData;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,8 +9,9 @@ import java.io.OutputStream;
 import java.net.ProtocolException;
 import java.util.zip.GZIPInputStream;
 
-import collect.DataObject;
-import configuration.Configuration;
+import org.openbci.collect.DataObject;
+import org.openbci.configuration.Configuration;
+import org.openbci.general.EegData;
 
 public class HddRecordingPlayer implements IProtocol {
 

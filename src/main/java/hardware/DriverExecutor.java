@@ -1,7 +1,6 @@
 package hardware;
 
 
-import general.EegData;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -19,11 +18,11 @@ import javolution.util.FastList;
 import javolution.util.FastTable;
 
 import org.apache.log4j.Logger;
-
-import signalProcessing.ISignalFilter;
-import astart.ProjectStarter;
-import configuration.Configuration;
-import configuration.IConfigurationListener;
+import org.openbci.astart.ProjectStarter;
+import org.openbci.configuration.Configuration;
+import org.openbci.configuration.IConfigurationListener;
+import org.openbci.general.EegData;
+import org.openbci.signalProcessing.ISignalFilter;
 
 /**
  * Gets data from hardware or from random number generator

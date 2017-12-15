@@ -1,11 +1,11 @@
 package hardware;
 
-import general.EegData;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ProtocolException;
+
+import org.openbci.general.EegData;
 
 public interface IProtocol {
 

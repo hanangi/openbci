@@ -1,15 +1,13 @@
 package hardware;
 
-import general.EegData;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ProtocolException;
 
 import org.apache.log4j.Logger;
-
-import astart.ProjectStarter;
+import org.openbci.astart.ProjectStarter;
+import org.openbci.general.EegData;
 
 /**
  * Implementation of Braintronics hardware protocol

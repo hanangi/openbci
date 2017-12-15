@@ -1,6 +1,6 @@
 package hardware;
 
-import general.EegData;
+import org.openbci.general.EegData;
 
 public interface IDriverListener {
 	

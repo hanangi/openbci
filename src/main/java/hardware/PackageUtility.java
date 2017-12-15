@@ -15,7 +15,7 @@ import java.util.jar.JarInputStream;
 public class PackageUtility {
 	static String jarName = "jEEG.jar" ;
 	public static Class[] getClasses(String packageName) throws ClassNotFoundException{
-  ArrayList<Class> classes = new ArrayList<Class> ();
+		ArrayList<Class> classes = new ArrayList<Class> ();
 
   packageName = packageName.replaceAll("\\." , "/");
   File f = new File(jarName);
@@ -43,6 +43,7 @@ public class PackageUtility {
 		return classesA;
   }else
 	  return getClassesDir(packageName);
+
 }
 	
 	public static Class[] getClassesDir(String pckgname)

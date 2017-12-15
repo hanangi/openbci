@@ -1,7 +1,5 @@
 package hardware;
 
-import general.EegData;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +8,8 @@ import java.io.PipedInputStream;
 import java.net.ProtocolException;
 import java.util.BitSet;
 import java.util.Random;
+
+import org.openbci.general.EegData;
 
 public class P3protocol implements IProtocol {
 	
