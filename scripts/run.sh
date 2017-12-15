@@ -13,4 +13,4 @@ fi
 
 JAR=`ls $PROJ_HOME/libs/*`
 
-java -Ddriver=$DRIVER -Dimeis=$IMIES -jar $JAR
+java -DconfFolder=${PROJ_HOME}/conf -jar $JAR ${PROJ_HOME}/conf/conf.xml

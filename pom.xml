@@ -51,13 +51,6 @@
 		<version>4.8.2</version>
 	</dependency>
 	
-	<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
-	<dependency>
-	    <groupId>org.reflections</groupId>
-	    <artifactId>reflections</artifactId>
-	    <version>0.9.10</version>
-	</dependency>
-	
 	<!-- https://mvnrepository.com/artifact/org.eclipse.swt.org.eclipse.swt.gtk.linux.x86_64.4.3.swt/org.eclipse.swt.gtk.linux.x86_64 -->
 	<dependency>
 	    <groupId>org.eclipse.swt.org.eclipse.swt.gtk.linux.x86_64.4.3.swt</groupId>
@@ -90,7 +83,7 @@
 							</descriptorRefs>
 							<archive>
 								<manifest>
-									<mainClass>com.angelsense.selenium.autotest.App</mainClass>
+									<mainClass>org.openbci.astart.ProjectStarter</mainClass>
 									<addClasspath>true</addClasspath>
 								</manifest>
 							</archive>

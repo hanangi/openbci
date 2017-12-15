@@ -359,7 +359,7 @@ public class ControlPanel implements ISignalAccumulatorWinnerListener {
 				textInterspaceMinTime.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED)) ;
 			}
 		}catch(Exception e) {
-			log.error(e.getMessage());
+			log.error("Error: " + e.getMessage(), e);
 		}
 	}
 
